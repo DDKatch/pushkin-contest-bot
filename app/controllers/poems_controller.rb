@@ -27,7 +27,7 @@ class PoemsController < ApplicationController
   def create
     @poem = Poem.new(poem_params)  
     @poem_lines = params[:poem][:lines].split("\r\n") # poem lines
-    
+
     respond_to do |format|
       if @poem.save && save_poem_lines(Poem.last.id, @poem_lines)
         
