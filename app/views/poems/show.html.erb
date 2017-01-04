@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong></br>
+  <%= @poem.title %>
+</p>
+
+<strong>Lines:</strong></br>
+  
+<% poem_lines(params[:id]).each do |line|%>
+  <%= line %></br>
+<% end %></br>
+
+<%= link_to 'Edit', edit_poem_path(@poem) %> |
+<%= link_to 'Back', poems_path %>

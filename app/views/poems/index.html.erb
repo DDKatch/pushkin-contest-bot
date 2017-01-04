@@ -1,0 +1,36 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Poems</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Title</th>
+      <th>Lines</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @poems.each do |poem| %>
+      <tr>
+        <td><%= poem.id %></td>
+        <td><%= poem.title %></td>
+        <td>
+          <% poem_lines(poem.id).first(3).map do |line|%>
+            <%= line %></br>
+          <% end %>
+          <%= "..." %></br>
+        </td>
+        <td><%= link_to 'Show', poem %></td>
+        <td><%= link_to 'Edit', edit_poem_path(poem) %></td>
+        <td><%= link_to 'Destroy', poem, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Poem', new_poem_path %>
