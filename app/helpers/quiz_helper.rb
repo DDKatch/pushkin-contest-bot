@@ -42,17 +42,25 @@ module QuizHelper
           res << a.reject{ |w| words[i].include? w }.join
         end        
         answers[question] = "#{res.join(",")}"
+        $redis.set("#{level},", answers.to_json)
       end
-      $redis.set("#{level},", answers)
       answers[question]
-    when 5 # sql запрос может быть лучше
-      line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
-      all_words = Word.where(line_id: line_id).pluck("text")
-      "#{all_words.reject{ |w| words.include? w }.join},#{words.reject{ |w| all_words.include? w  }.join}"
+    when 5 
+      if answers[question] == nil
+        line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
+        all_words = Word.where(line_id: line_id).pluck("text")
+        answers[question] = "#{all_words.reject{ |w| words.include? w }.join},#{words.reject{ |w| all_words.include? w  }.join}"
+        $redis.set("#{level},", answers.to_json)
+      end
+      answers[question]
     when 6
-      line_id = Line.where("text like #{query_part_of_letters}").limit(1)
-      Line.joins(:poem).where(id: line_id).pluck("text").join
-    end  
+      if answers[question] == nil
+        line_id = Line.where("text like #{query_part_of_letters}").limit(1)
+        answers[question] = Line.joins(:poem).where(id: line_id).pluck("text").join
+        $redis.set("#{level},", answers.to_json)
+      end  
+      answers[question] 
+    end
   end
   private
   def init_answers(level)
