@@ -24,7 +24,7 @@ module QuizHelper
         $redis.set("2", answers)
       end
       answers[question]      
-    when 2..4
+    when 3..4
       answers = init_answers(level)
       if answers[question] == nil
         q = []
@@ -47,6 +47,8 @@ module QuizHelper
         answers[question] = "#{res.join(",")}"
       end
       answers[question]
+      all_words = Line.where("text like #{query_part}").pluck("text").join.split(/[^[[:word:]]]+/)
+      "#{all_words.reject{ |w| words.include? w }.join}"
     when 5 # sql запрос может быть лучше
       line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
       all_words = Word.where(line_id: line_id).pluck("text")
