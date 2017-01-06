@@ -6,9 +6,9 @@ module QuizHelper
     letters = words.join.split("")
     query_part_of_letters = "'%#{letters.join("%' AND text like '%")}%'"
     query_part_of_words = "'#{words.join("%' AND text like '%")}%'"
+    answers = init_answers(level)
     case level
     when 1 
-      answers = init_answers(1)
       if answers[question] == nil          
         answers[question] = Line.joins(:poem).where(text: question).pluck("title").join
         answers.to_json
@@ -16,7 +16,6 @@ module QuizHelper
       end
       answers[question]
     when 2
-      answers = init_answers(2)
       if answers[question] == nil  
         all_words = Line.where("text like #{query_part_of_words}").pluck("text").join.split(/[^[[:word:]]]+/) 
         answers[question] = "#{all_words.reject{ |w| words.include? w }.join}"   
@@ -24,8 +23,7 @@ module QuizHelper
         $redis.set("2", answers)
       end
       answers[question]      
-    when 2..4
-      answers = init_answers(level)
+    when 3..4
       if answers[question] == nil
         q = []
         words = []
@@ -42,10 +40,10 @@ module QuizHelper
         
         all_words.each_with_index do |a, i|
           res << a.reject{ |w| words[i].include? w }.join
-        end
-        
+        end        
         answers[question] = "#{res.join(",")}"
       end
+      $redis.set("#{level},", answers)
       answers[question]
     when 5 # sql запрос может быть лучше
       line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
