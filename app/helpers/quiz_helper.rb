@@ -12,7 +12,7 @@ module QuizHelper
         if $redis.get("1") == nil
           $redis.set("1", {}.to_json)
         else
-          answers = eval($redis.get("1"))
+          answers = eval($redis.get("1"))x
         end
         if answers[question] == nil          
           answers[question] = Line.joins(:poem).where(text: question).pluck("title").join
