@@ -1,3 +1,4 @@
+require 'json'
 module QuizHelper
   def q_resolve(level, question)
     words = question.split(/[^[[:word:]]]+/)
@@ -7,7 +8,19 @@ module QuizHelper
     query_part_of_words = "'#{words.join("%' AND text like '%")}%'"
     case level
       when 1 
-        Line.joins(:poem).where(text: question).pluck("title").join   
+        answers = {}
+        if $redis.get("1") == nil
+          $redis.set("1", {}.to_json)
+        else
+          answers = eval($redis.get("1"))
+        end
+        if answers[question] == nil          
+          answers[question] = Line.joins(:poem).where(text: question).pluck("title").join
+          answers.to_json
+          $redis.set("1", answers)
+        end
+        answers[question]
+       # binding.pry
       when 2
         line_id = Line.where("text like #{query_part_of_words}")
         Line.joins(:poem).where(id: line_id).pluck("title").join
