@@ -6,19 +6,18 @@ module QuizHelper
     letters = words.join.split("")
     query_part_of_letters = "'%#{letters.join("%' AND text like '%")}%'"
     query_part_of_words = "'#{words.join("%' AND text like '%")}%'"
+    answers = init_answers(level)
     case level
     when 1 
-      answers = init_answers(1)
       if answers[question] == nil          
-        answers[question] = Line.joins(:poem).where(text: question).pluck("title").join
+        answers[question] = Line.find_title(question)
         answers.to_json
         $redis.set("1", answers)
       end
       answers[question]
     when 2
-      answers = init_answers(2)
       if answers[question] == nil  
-        all_words = Line.where("text like #{query_part_of_words}").pluck("text").join.split(/[^[[:word:]]]+/) 
+        all_words = Line.find_line_with_skipped_word(query_part_of_words).join.split(/[^[[:word:]]]+/)
         answers[question] = "#{all_words.reject{ |w| words.include? w }.join}"   
         answers.to_json
         $redis.set("2", answers)
@@ -37,26 +36,32 @@ module QuizHelper
           words[i].delete("WORD")
           query_part << "'#{words[i].join("%' AND text like '%")}%'"
         end
-        all_words = Line.where("text like #{query_part.join("OR text like")}").pluck("text").reverse
+        all_words = Line.find_changed_word_and_original(query_part).reverse
         all_words.map! {|l| l.split(/[^[[:word:]]]+/) }
         
         all_words.each_with_index do |a, i|
           res << a.reject{ |w| words[i].include? w }.join
-        end
-        
+        end        
         answers[question] = "#{res.join(",")}"
+        $redis.set("#{level},", answers.to_json)
       end
       answers[question]
-      all_words = Line.where("text like #{query_part}").pluck("text").join.split(/[^[[:word:]]]+/)
-      "#{all_words.reject{ |w| words.include? w }.join}"
     when 5 # sql запрос может быть лучше
-      line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
-      all_words = Word.where(line_id: line_id).pluck("text")
-      "#{all_words.reject{ |w| words.include? w }.join},#{words.reject{ |w| all_words.include? w  }.join}"
+      if answers[question] == nil
+        line_id = Word.fifth_level(words)
+        all_words = Word.take_line_id(line_id)
+        answers[question] = "#{all_words.reject{ |w| words.include? w }.join},#{words.reject{ |w| all_words.include? w  }.join}"
+        $redis.set("#{level},", answers.to_json)
+      end
+      answers[question]
     when 6
-      line_id = Line.where("text like #{query_part_of_letters}").limit(1)
-      Line.joins(:poem).where(id: line_id).pluck("text").join
-    end  
+      if answers[question] == nil
+        line_id = Line.find_text_with_correct_letters(query_part_of_letters)
+        answers[question] = Line.find_correct_text(line_id)
+        $redis.set("#{level},", answers.to_json)
+      end  
+      answers[question] 
+    end
   end
   private
   def init_answers(level)
