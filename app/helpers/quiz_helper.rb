@@ -24,10 +24,7 @@ module QuizHelper
       end
       answers[question]      
     when 3..4
-<<<<<<< HEAD
-=======
       answers = init_answers(level)
->>>>>>> 47f9c5dc07f275a827b75710a4219dbf45b654c8
       if answers[question] == nil
         q = []
         words = []
@@ -57,15 +54,13 @@ module QuizHelper
         $redis.set("#{level},", answers.to_json)
       end
       answers[question]
-<<<<<<< HEAD
-=======
+
       all_words = Line.where("text like #{query_part}").pluck("text").join.split(/[^[[:word:]]]+/)
       "#{all_words.reject{ |w| words.include? w }.join}"
     when 5 # sql запрос может быть лучше
       line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
       all_words = Word.where(line_id: line_id).pluck("text")
       "#{all_words.reject{ |w| words.include? w }.join},#{words.reject{ |w| all_words.include? w  }.join}"
->>>>>>> 47f9c5dc07f275a827b75710a4219dbf45b654c8
     when 6
       if answers[question] == nil
         line_id = Line.where("text like #{query_part_of_letters}").limit(1)
