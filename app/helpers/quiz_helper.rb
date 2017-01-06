@@ -8,12 +8,7 @@ module QuizHelper
     query_part_of_words = "'#{words.join("%' AND text like '%")}%'"
     case level
     when 1 
-      answers = {}
-      if $redis.get("1") == nil
-        $redis.set("1", {}.to_json)
-      else
-        answers = eval($redis.get("1"))x
-      end
+      answers = init_answers(1)
       if answers[question] == nil          
         answers[question] = Line.joins(:poem).where(text: question).pluck("title").join
         answers.to_json
@@ -21,14 +16,37 @@ module QuizHelper
       end
       answers[question]
     when 2
-      line_id = Line.where("text like #{query_part_of_words}")
-      Line.joins(:poem).where(id: line_id).pluck("title").join
-    when 3
-      line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
-      Line.joins(:poem).where(id: line_id).pluck("title").join
-    when 4
-      line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
-      Line.joins(:poem).where(id: line_id).pluck("title").join
+      answers = init_answers(2)
+      if answers[question] == nil  
+        all_words = Line.where("text like #{query_part_of_words}").pluck("text").join.split(/[^[[:word:]]]+/) 
+        answers[question] = "#{all_words.reject{ |w| words.include? w }.join}"   
+        answers.to_json
+        $redis.set("2", answers)
+      end
+      answers[question]      
+    when 2..4
+      answers = init_answers(level)
+      if answers[question] == nil
+        q = []
+        words = []
+        query_part = []
+        q = question.split(/\n/)
+        res = []
+        (level - 1).times do |i|
+          words << q[i].split(/[^[[:word:]]]+/)
+          words[i].delete("WORD")
+          query_part << "'#{words[i].join("%' AND text like '%")}%'"
+        end
+        all_words = Line.where("text like #{query_part.join("OR text like")}").pluck("text").reverse
+        all_words.map! {|l| l.split(/[^[[:word:]]]+/) }
+        
+        all_words.each_with_index do |a, i|
+          res << a.reject{ |w| words[i].include? w }.join
+        end
+        
+        answers[question] = "#{res.join(",")}"
+      end
+      answers[question]
     when 5 # sql запрос может быть лучше
       line_id = Word.select("line_id").where(text: words).group(:line_id).having("count(*) > 2").order("count(*) desc").limit(1).pluck("line_id").join
       all_words = Word.where(line_id: line_id).pluck("text")
@@ -37,5 +55,15 @@ module QuizHelper
       line_id = Line.where("text like #{query_part_of_letters}").limit(1)
       Line.joins(:poem).where(id: line_id).pluck("text").join
     end  
+  end
+  private
+  def init_answers(level)
+    answers = {}
+    if $redis.get("#{level}") == nil
+      $redis.set("#{level}", {}.to_json)
+    else
+      answers = eval($redis.get("#{level}"))
     end
+    answers
+  end
 end
