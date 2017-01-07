@@ -1,4 +1,3 @@
-require 'json'
 module QuizHelper
   def q_resolve(level, question)
     words = question.split(/[^[[:word:]]]+/)
@@ -63,7 +62,9 @@ module QuizHelper
       answers[question] 
     end
   end
+
   private
+  
   def init_answers(level)
     answers = {}
     if $redis.get("#{level}") == nil
