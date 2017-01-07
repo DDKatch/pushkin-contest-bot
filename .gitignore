@@ -22,3 +22,6 @@
 
 secrets.yml
 database.yml
+puma.rb
+# deploy/
+# deploy.rb
