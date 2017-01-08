@@ -6,7 +6,7 @@ module PoemsHelper
   def save_poem_lines(poem_id, poem_lines)
     Line.bulk_insert do |lines| # using gem bulk_insert
       poem_lines.map do |text|
-        lines.add({poem_id: poem_id, text: text, sorted_line: text.chars.sort.join.gsub(/[^0-9a-z]/i, '') })
+        lines.add({poem_id: poem_id, text: text, sorted_line: text.chars.sort.join.gsub(/[^0-9А-Яа-я]/i, '') })
       end
     end
 

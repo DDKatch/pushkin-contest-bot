@@ -62,8 +62,9 @@ module QuizHelper
       answers[question] 
     when 7
       if answers[question] == nil
-        question = question.chars.sort.join
-        answers[question] = Line.find_sorted_string(question)    
+        temp = question.chars.sort.join.gsub(" ", "")
+        answers[question] = Line.find_sorted_string(temp)   
+        binding.pry 
       end
       answers[question]
     end
