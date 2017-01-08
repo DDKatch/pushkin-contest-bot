@@ -7,6 +7,7 @@ end
 
 gem 'bulk_insert'
 gem 'pry-remote'
+gem 'sidekiq'
 
 gem 'rails', '~> 5.0.1'
 gem 'pg', '0.18.4'
@@ -41,6 +42,7 @@ group :development do
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano3-puma' 
   gem 'capistrano-rvm' 
+  gem 'capistrano-sidekiq'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

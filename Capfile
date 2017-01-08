@@ -1,12 +1,13 @@
 # Load DSL and set up stages
 require "capistrano/setup"
-
+require 'capistrano/rvm'
+require "capistrano/scm/git"
 require "capistrano/deploy"
 require "capistrano/rails"
 require 'capistrano/puma'
 require 'capistrano/puma/nginx'
-require 'capistrano/rvm'
-require "capistrano/scm/git"
+require 'capistrano/sidekiq'
+require 'capistrano/sidekiq/monit'
 
 install_plugin Capistrano::SCM::Git
 
