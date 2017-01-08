@@ -3,13 +3,6 @@ class QuizController < ApplicationController
   
   skip_before_action :verify_authenticity_token
   
-  def show_poem
-    @full_poem = {}
-    @full_poem[:title] = Poem.find(1).title
-    @full_poem[:lines] = Line.where(poem_id: 1).pluck("text")
-    render json: @full_poem.to_json
-  end
-
   def resolve
 
     @question = params[:question]
