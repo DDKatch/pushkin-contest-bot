@@ -1,0 +1,20 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Level</th>
+      <th>Question</th>
+      <th>Answer</th>
+    </tr>
+  </thead>
+  <tbody>
+		<% @histories.each do |history| %>
+    <tr>
+      <th scope="row"><%= history.id %></th>
+      <td><%= history.level %></td>
+      <td><%= history.question %></td>
+      <td><%= history.answer %></td>
+    </tr>
+		<% end%>
+  </tbody>
+</table>
