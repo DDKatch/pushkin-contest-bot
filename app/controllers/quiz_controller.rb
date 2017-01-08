@@ -16,7 +16,7 @@ class QuizController < ApplicationController
     
     parameters = {
       answer: answer,
-      token:  ENV['API_KEY'],
+      token:  Rails.application.secrets[:api_key],
       task_id:  params[:id]
     }
     
