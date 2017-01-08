@@ -6,6 +6,7 @@ git_source(:github) do |repo_name|
 end
 
 gem 'bulk_insert'
+gem 'pry-remote'
 
 gem 'rails', '~> 5.0.1'
 gem 'pg', '0.18.4'
