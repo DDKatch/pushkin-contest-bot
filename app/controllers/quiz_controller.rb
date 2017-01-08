@@ -9,16 +9,20 @@ class QuizController < ApplicationController
     level = params[:level]
 
     answer = q_resolve level, question
-    
-    render nothing: true
+   
+    render nothing: true, :status => 200, :content_type => 'application/json'
     
     uri = URI("http://pushkin-contest.ror.by/quiz")
+    
     parameters = {
       answer: answer,
       token:  ENV['API_KEY'],
       task_id:  params[:id]
     }
-    Net::HTTP.post_form(uri, parameters)
+    
+    binding.remote_pry
+    
+    Net::HTTP.new(uri, parameters).post_form
 
   end
 
