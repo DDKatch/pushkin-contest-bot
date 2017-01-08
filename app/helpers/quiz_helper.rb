@@ -60,6 +60,12 @@ module QuizHelper
         $redis.set("#{level},", answers.to_json)
       end  
       answers[question] 
+    when 7
+      if answers[question] == nil
+        question = question.chars.sort.join
+        answers[question] = Line.find_sorted_string(question)    
+      end
+      answers[question]
     end
   end
 
