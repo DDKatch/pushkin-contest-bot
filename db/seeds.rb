@@ -24,12 +24,19 @@ def parse_poems_from_url(url)
   poems
 end
 
-def init_db(poems)
-  poems = JSON.parse(File.read(Rails.root.join('config', 'db.json'))).to_h
+def normalize(string)
+    spaces = string.mb_chars.gsub(/\A[[:space:]]*/, '').gsub(/[[:space:]]*\z/, '')
+    spaces.gsub(/[\.\,\!\:\;\?]+\z/, '').to_s
+end
 
-  poems.map do |key, value|
-    @poem = Poem.new title: key
-    @poem_lines = value
+def init_db(poems)
+  j_poems = JSON.parse(File.read(Rails.root.join('config', 'db.json')))
+
+  @poems = j_poems.flat_map{|name, lines| {title: name, lines: lines} }
+
+  @poems.map do |poem|
+    @poem = Poem.new title: poem[:title]
+    @poem_lines = poem[:lines].map!{ |v| normalize(v) }
     
     @poem.save
     save_poem_lines(Poem.last.id, @poem_lines.reverse)
