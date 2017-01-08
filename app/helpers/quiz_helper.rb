@@ -67,6 +67,11 @@ module QuizHelper
         binding.pry 
       end
       answers[question]
+    when 8
+      if answers[question] == nil
+        temp = question.chars.sort.join.gsub(" ", "")
+        
+      end
     end
   end
 
