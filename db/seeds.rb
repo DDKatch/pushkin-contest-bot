@@ -25,11 +25,11 @@ def parse_poems_from_url(url)
 end
 
 def init_db(poems)
-  poems = parse_poems_from_url URL
+  poems = JSON.parse(File.read(Rails.root.join('config', 'db.json'))).to_h
 
-  poems.map do |poem|
-    @poem = Poem.new title: poem[:title]
-    @poem_lines = poem[:text].split "\r\n"# poem lines
+  poems.map do |key, value|
+    @poem = Poem.new title: key
+    @poem_lines = value
     
     @poem.save
     save_poem_lines(Poem.last.id, @poem_lines.reverse)
