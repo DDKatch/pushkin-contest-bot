@@ -9,4 +9,4 @@ set :rails_env, 'production'
 set :rvm_type, :user
 set :rvm_ruby_version, '2.3.3'
 
-append :linked_files, "config/database.yml", "config/secrets.yml", "config/puma.rb"
+append :linked_files, "config/database.yml", "config/secrets.yml"
