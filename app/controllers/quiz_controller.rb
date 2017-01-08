@@ -2,7 +2,6 @@ class QuizController < ApplicationController
   include QuizHelper
   skip_before_action :verify_authenticity_token
   
-
 	def resolve
     question = params[:question]
     level = params[:level]
@@ -13,6 +12,4 @@ class QuizController < ApplicationController
     
 		render json: 'ok' 
 	end
-
-
 end

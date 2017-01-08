@@ -7,7 +7,7 @@ require "capistrano/rails"
 require 'capistrano/puma'
 require 'capistrano/puma/nginx'
 require 'capistrano/sidekiq'
-require 'capistrano/sidekiq/monit'
+# require 'capistrano/sidekiq/monit'
 
 install_plugin Capistrano::SCM::Git
 

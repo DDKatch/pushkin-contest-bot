@@ -12,5 +12,6 @@ class RespondentWorker
       @http.post('/quiz', data.to_json, {'Content-Type' =>'application/json'})
     # end
 
+      binding.pry_remote
   end
 end
