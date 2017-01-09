@@ -16,15 +16,16 @@ def parse_poems_from_url(url)
   poems
 end
 
-def normalize(string)
-    spaces = string.mb_chars.gsub(/\A[[:space:]]*/, '').gsub(/[[:space:]]*\z/, '')
-    spaces.gsub(/[\.\,\!\:\;\?]+\z/, '').to_s
-end
-
 def init_db(poems)
-  j_poems = JSON.parse(File.read(Rails.root.join('config', 'db.json')))
+  j_poems = JSON.parse(File.read(Rails.root.join('config', 'the-best-db.json')))
 
   @poems = j_poems.flat_map{|name, lines| {title: name, lines: lines} }
+
+  @poems.uniq! {|e| e[:lines]}
+
+  File.open("the-best-db.json","w") do |f|
+    f.write(@poems.to_json)
+  end
 
   @poems.map do |poem|
     @poem = Poem.new title: poem[:title]
