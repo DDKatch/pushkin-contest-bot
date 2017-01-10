@@ -5,7 +5,7 @@ require "capistrano/scm/git"
 require "capistrano/deploy"
 require "capistrano/rails"
 require 'capistrano/puma'
-require 'capistrano/puma/nginx'
+# require 'capistrano/puma/nginx'
 
 install_plugin Capistrano::SCM::Git
 
