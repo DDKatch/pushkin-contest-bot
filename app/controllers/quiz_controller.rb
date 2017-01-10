@@ -1,5 +1,6 @@
 class QuizController < ApplicationController
-  include QuizHelper
+  include QuizResolver
+
   skip_before_action :verify_authenticity_token
   
   ADDR=URI("http://pushkin.rubyroidlabs.com/quiz") 
