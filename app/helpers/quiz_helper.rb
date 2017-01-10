@@ -1,5 +1,13 @@
 module QuizHelper
+ 
+  def normalize(string)
+    spaces = string.mb_chars.gsub(/\A[[:space:]]*\z/, '')
+    spaces.gsub(/[\.\,\!\:\;\?]+\z/, '').to_s
+  end
+  
   def q_resolve(level, question)
+    question = normalize(question)
+
     words = question.split(/[^[[:word:]]]+/)
     words.delete("WORD")
     letters = words.join.split("")
