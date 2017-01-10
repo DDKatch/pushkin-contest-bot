@@ -22,6 +22,7 @@ gem 'redis-rails'
 gem 'redis-rack-cache'
 gem 'bcrypt', '~> 3.1.7'
 gem 'bootstrap', '~> 4.0.0.alpha6'
+gem 'tether-rails'
 
 gem 'turbolinks', '~> 5'
 gem 'redis', '~> 3.0'
