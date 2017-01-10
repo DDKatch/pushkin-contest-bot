@@ -42,7 +42,6 @@ group :development do
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano3-puma' 
   gem 'capistrano-rvm' 
-  gem 'capistrano-sidekiq'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
