@@ -1,0 +1,9 @@
+host: server_ip 
+user: user_name
+repository: repository_link_by_ssh 
+branch: branch_name
+application: application_name 
+roles: [ 'web', 'app', 'db']
+ruby_version: 2.0.0
+workers: 5
+threads: [4, 16]

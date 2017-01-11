@@ -1,12 +1,13 @@
-# Load DSL and set up stages
-require "capistrano/setup"
+# Load DSL and Setup Up Stages
+require 'capistrano/setup'
 require 'capistrano/rvm'
 require "capistrano/scm/git"
-require "capistrano/deploy"
-require "capistrano/rails"
+require 'capistrano/deploy'
+require 'capistrano/rails'
+require 'capistrano/bundler'
 require 'capistrano/puma'
-# require 'capistrano/puma/nginx'
 
 install_plugin Capistrano::SCM::Git
 
-Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
+# Leads custom tasks from `lib/capistrano/tasks' if you have any defined.
+Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }

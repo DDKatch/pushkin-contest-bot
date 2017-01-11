@@ -1,0 +1,16 @@
+default: &default
+    adapter: postgresql
+    pool: 5
+    timeout: 5000
+
+development:
+    <<: *default
+    encoding: UTF-8
+    database: db_name 
+    username: role_name
+
+production:
+    <<: *default
+    encoding: UTF-8
+    database: db_name 
+    username: role_name

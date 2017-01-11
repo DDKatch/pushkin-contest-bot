@@ -236,8 +236,9 @@ DEPENDENCIES
   bootstrap (~> 4.0.0.alpha6)
   bulk_insert
   byebug
-  capistrano (~> 3.6)
-  capistrano-rails (~> 1.2)
+  capistrano
+  capistrano-bundler
+  capistrano-rails
   capistrano-rvm
   capistrano3-puma
   coffee-rails (~> 4.2)
