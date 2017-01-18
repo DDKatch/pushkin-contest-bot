@@ -6,11 +6,12 @@ class QuizMiddleware
   end
 
   def initialize app
+    @app = app
     @token = Rails.application.secrets[:api_key]
     @address = URI("http://pushkin.rubyroidlabs.com/quiz") 
 
     @poems = JSON.load(IO.read(Rails.root.join('config', 'the-best-db.json')))
-
+    
     lines_titles_array = @poems.inject([]) do |lines, data|
       lines << data['lines'].inject([]) do |res_lines, line|
         res_lines << [normalize_db(line), data['title']]
@@ -25,10 +26,6 @@ class QuizMiddleware
         res_lines << normalize_db(line)
       end
     end.flatten!
-
-    # pry
-    
-    @app = app
   end
 
   def send_answer(answer, task_id)
@@ -37,10 +34,9 @@ class QuizMiddleware
 
   def call env
     request_catched_time = Time.now
-    if env["REQUEST_METHOD"] == "POST" && env["REQUEST_PATH"] == "/quiz" # && env["HTTP_HOST"] == "185.143.172.139"   # for production
-    # if env["REQUEST_METHOD"] == "POST" && env["REQUEST_PATH"] == "/quiz"
-      # puts "Time: #{request_catched_time}"
-      puts params = JSON.parse(env["rack.input"].read)
+    params = JSON.parse(env["rack.input"].read)
+    if env["REQUEST_METHOD"] == "POST" && 
+        (params['level'] == 1 || params['level'] == 8)# && env["HTTP_HOST"] == "185.143.172.139"   # for production
 
       answer = resolve(params['level'], normalize(params['question']))
       puts "Answer: #{answer}, Id: #{params['id']}"
@@ -51,16 +47,13 @@ class QuizMiddleware
       # elapsed_time = Time.now - temp_time 
       
       send_answer(answer, params['id'])
-
       puts "Elapsed time: #{Time.now - request_catched_time} sec\n\n"
-      
-      [200, { 'Content-Type' => 'application/json' }, ['ok']]
-    else
-      @app.call env
     end
+    @app.call env
   end
 
   private
+  
   def normalize(string)
     string.mb_chars.squish!.to_s
   end
@@ -72,7 +65,7 @@ class QuizMiddleware
     when 2
       question.gsub!('%WORD%', '([А-Яа-я]+)')
       @lines.map do |line| 
-        word = line[%r{\A#{question }\z}, 1]
+        word = line[%r{\A#{ question }\z}, 1]
         return word unless word.nil?
       end
     end

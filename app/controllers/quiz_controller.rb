@@ -6,11 +6,11 @@ class QuizController < ApplicationController
   ADDR=URI("http://pushkin.rubyroidlabs.com/quiz") 
   
   def resolve
-    question = params[:question]
-    level = params[:level]
-    answer = q_resolve level, question
-    
 		render json: 'ok' 
+    
+    question = params['question']
+    level = params['level']
+    answer = q_resolve level, question
  
     parameters = {
       answer: answer,

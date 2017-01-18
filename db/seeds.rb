@@ -1,8 +1,8 @@
 include PoemsHelper
 
-def normalize(string)
-  spaces = string.mb_chars.gsub(/\A[[:space:]]*\z/, '')
-  spaces.gsub(/[\.\,\!\:\;\?]+\z/, '').to_s
+def normalize_db(string)
+  string.mb_chars.squish!.to_s
+  string.gsub(/[\.\,\!\:\;\?\—]\z/, '')
 end
 
 def initialize_database
@@ -10,7 +10,7 @@ def initialize_database
   poems.map do |poem|
     Poem.new(title: poem["title"]).save
    
-    lines = poem["lines"].inject([]) { |rows, line| rows << normalize(line) }
+    lines = poem["lines"].inject([]) { |rows, line| rows << normalize_db(line) }
 
     lines.reverse!
     save_poem_lines(Poem.last.id, lines)
