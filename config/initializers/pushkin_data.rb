@@ -1,9 +1,7 @@
 
 def normalize(string)
-  spaces = string.mb_chars.gsub(/\A[[:space:]]*/, '')
-  spaces = spaces.gsub(/[[:space:]]*\z/, '')
-  res = spaces.gsub(/[\.\,\!\:\;\?\—]\z/, '')
-  res.gsub(/[[:space:]]\z/, '').to_s
+  string.mb_chars.squish!.to_s
+  string.gsub(/[\.\,\!\:\;\?\—]\z/, '')
 end
 
 

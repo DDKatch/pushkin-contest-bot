@@ -15,7 +15,8 @@ class QuizMiddleware
     request_catched_time = Time.now 
     if env["REQUEST_METHOD"] == "POST" && env["REQUEST_PATH"] == "/quiz" # && env["HTTP_HOST"] == "185.143.172.139"   # for production
     # if env["REQUEST_METHOD"] == "POST" && env["REQUEST_PATH"] == "/quiz"
-      params = JSON.parse(env["rack.input"].read)
+      puts "Time: #{request_catched_time}"
+      puts params = JSON.parse(env["rack.input"].read)
 
       answer = q_resolve(params['level'], normalize(params['question']))
       
@@ -42,10 +43,8 @@ class QuizMiddleware
 
   private
   def normalize(string)
-    spaces = string.mb_chars.gsub(/\A[[:space:]]*/, '')
-    spaces = spaces.gsub(/[[:space:]]*\z/, '')
-    res = spaces.to_s
-    res.gsub(/[[:space:]]\z/, '').to_s
+    # binding.pry
+    string.mb_chars.squish!.to_s
   end
 
   def q_resolve(level, question)
