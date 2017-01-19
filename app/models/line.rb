@@ -6,5 +6,6 @@ class Line < ApplicationRecord
   scope :find_changed_word_and_original, -> (query_part){ where("text like #{ query_part.join("OR text like") }").pluck("text") }
   scope :find_text_with_correct_letters, -> (query_part_of_letters){ where("text like #{ query_part_of_letters }").limit(1) }
   scope :find_correct_text, -> (line_id){ joins(:poem).where(id: line_id).pluck("text").join }
-  scope :find_sorted_string, -> (question){joins(:poem).where(sorted_line: question).pluck("text").join}
+  scope :find_sorted_string, -> (question){ joins(:poem).where(sorted_line: question).pluck("text").join }
+  scope :find_sorted_string_by_parts, -> (query_part){ where("sorted_line like #{ query_part }").pluck("text").join  }
 end

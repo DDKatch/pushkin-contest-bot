@@ -48,6 +48,9 @@ module QuizResolver
       Line.find_sorted_string(temp)   
     when 8
       temp = question.chars.sort.join.gsub(" ", "")
+      splited_question = [temp[0...(temp.length - 1) / 2], temp[((temp.length - 1) / 2 + 1)..temp.length]]
+      query_part = "'#{splited_question[0]}%' OR sorted_line like '%#{splited_question[1]}'"
+      Line.find_sorted_string_by_parts("#{query_part} OR sorted_line like '#{temp}'")   
     end
   end
 end
